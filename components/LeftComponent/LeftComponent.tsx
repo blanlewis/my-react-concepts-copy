@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box,Typography } from "@mui/material";
 import CustomTabs from "@/components/CustomTabs";
 import { useState } from "react";
 import CustomAccordion from "@/components/CustomAccordion";
@@ -29,7 +29,7 @@ const PLANNING_ITEMS: PlanningItem[] = [
 ];
 
 const PlanningList = ({ items }: { items: PlanningItem[] }) => (
-  <Box sx={{ height: "calc(100% - 50px)", maxHeight: "calc(100% - 50px)", overflowY: "auto" }}>
+  <Box sx={{ height: "calc(100% - 73px)", maxHeight: "calc(100% - 73px)", overflowY: "auto" }}>
     {items.map((item, index) => (
       <CustomAccordion key={index} header={item.name} body={item.description} />
     ))}
@@ -63,7 +63,8 @@ const LeftComponent = () => {
   ];
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+      <Typography sx={{ textAlign: "center" , fontSize: "14px"}}>Bookings</Typography>
       <CustomTabs tabsData={tabsData} value={value} setValue={setValue} />
     </Box>
   );
