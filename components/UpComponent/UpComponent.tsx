@@ -1,7 +1,8 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import CustomTabs from "@/components/CustomTabs";
 import { useState } from "react";
 import BookingsAccordion from "@/components/BookingsAccordion";
+import BookingsBar from "@/components/BookingsBar";
 
 enum BookingTabEnum {
   ALL = "all",
@@ -16,7 +17,7 @@ const UpComponent = () => {
       label: "All",
       value: BookingTabEnum.ALL,
       content: (
-        <Box sx={{ height: "calc(100% - 69px)", maxHeight: "calc(100% - 69px)", overflowY: "auto" }}>
+        <Box sx={{ height: "calc(100% - 96px)", maxHeight: "calc(100% - 69px)", overflowY: "auto" }}>
           <BookingsAccordion />
         </Box>
       ),
@@ -34,7 +35,7 @@ const UpComponent = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
-      <Typography sx={{ textAlign: "center", fontSize: "14px" }}>Bookings</Typography>
+      <BookingsBar />
       <CustomTabs tabsData={tabsData} value={value} setValue={setValue} />
     </Box>
   );
