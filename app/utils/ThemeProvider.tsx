@@ -21,6 +21,7 @@ export const AppThemeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     document.documentElement.style.colorScheme = mode;
+    document.documentElement.setAttribute("data-theme", mode);
   }, [mode]);
 
   const toggleTheme = () => setMode(prev => (prev === "light" ? "dark" : "light"));

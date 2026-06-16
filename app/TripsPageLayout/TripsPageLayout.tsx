@@ -25,7 +25,7 @@ const TripsPageLayout = () => {
         justifyContent: "center",
       }}
     >
-      <Box sx={{ position: "absolute", top: "53px", right: "3px", zIndex: 401 }}>
+      <Box sx={{ position: "absolute", top: "53px", right: "3px", zIndex: 1001 }}>
         <TripsToggle />
       </Box>
       {activeRightPanelToggle === RightComponentToggleOptionsEnum.MAP ? (

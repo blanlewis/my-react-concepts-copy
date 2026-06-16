@@ -24,3 +24,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+[data-theme="dark"] .leaflet-bar a,
+[data-theme="dark"] .leaflet-bar a:link,
+[data-theme="dark"] .leaflet-bar a:visited {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border-bottom-color: #555;
+}
+
+[data-theme="dark"] .leaflet-bar a:hover {
+  background-color: #3a3a3a;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .leaflet-bar a.leaflet-disabled {
+  background-color: #1e1e1e;
+  color: #888;
+}
+
+[data-theme="dark"] .leaflet-control-zoom {
+  border: 2px solid #555;
+}
