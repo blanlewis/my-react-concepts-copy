@@ -45,9 +45,6 @@ const RightComponent = () => {
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", position:"relative",overflow:"hidden" }}>
-      <Box sx={{ position: "absolute", top: "3px", right: "3px", zIndex: 401 }}>
-        <RightComponentToggle />
-      </Box>
       {activeRightPanelToggle === RightComponentToggleOptionsEnum.MAP ? (
         <MapComponent />
       ) : activeRightPanelToggle === RightComponentToggleOptionsEnum.GRID ? (

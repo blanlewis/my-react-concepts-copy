@@ -18,7 +18,7 @@ const TripsPageLayout = () => {
       <Box sx={{ position: "absolute", top: "53px", right: "3px", zIndex: 401 }}>
         <RightComponentToggle />
       </Box>
-      {/* <ReflexDragger
+      <ReflexDragger
         reflexContainerOrientation="horizontal"
         leftpaneComponent={
           <Box sx={{ width: "100%", height: "100%" }}>
@@ -36,7 +36,7 @@ const TripsPageLayout = () => {
         initialLeftFlex={0.5}
         initialRightFlex={0.5}
         isDraggerIconRequired={false}
-      /> */}
+      />
     </Box>
   );
 };
