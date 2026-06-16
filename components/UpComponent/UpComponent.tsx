@@ -18,6 +18,7 @@ const UpComponent = () => {
   const checkedIds = activeDossier
     ? [...activeDossier.bookingIds, ...activeDossier.pendingBookingIds]
     : [];
+  const acceptedBookingIds = dossiers.flatMap(d => d.bookingIds);
 
   const tabsData = [
     {
@@ -25,7 +26,7 @@ const UpComponent = () => {
       value: BookingTabEnum.ALL,
       content: (
         <Box sx={{ height: "calc(100% - 84px)", maxHeight: "calc(100% - 84px)", overflowY: "auto" }}>
-          <BookingsAccordion checkedIds={checkedIds} onToggle={toggleBookingInDossier} />
+          <BookingsAccordion checkedIds={checkedIds} excludedIds={acceptedBookingIds} onToggle={toggleBookingInDossier} />
         </Box>
       ),
     },
@@ -34,7 +35,7 @@ const UpComponent = () => {
       value: BookingTabEnum.SUGGESTION,
       content: (
         <Box sx={{ height: "calc(100% - 69px)", maxHeight: "calc(100% - 69px)", overflowY: "auto" }}>
-          <BookingsAccordion filterSuggestion checkedIds={checkedIds} onToggle={toggleBookingInDossier} />
+          <BookingsAccordion filterSuggestion checkedIds={checkedIds} excludedIds={acceptedBookingIds} onToggle={toggleBookingInDossier} />
         </Box>
       ),
     },

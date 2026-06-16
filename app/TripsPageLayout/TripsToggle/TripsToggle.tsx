@@ -20,6 +20,7 @@ const TripsToggle = () => {
       toggleData={toggleData}
       selectedToggle={activeRightPanelToggle}
       setSelectedToggle={setActiveRightPanelToggle as (value: string | null) => void}
+      isDeselectionNotAllowed
     />
   );
 };

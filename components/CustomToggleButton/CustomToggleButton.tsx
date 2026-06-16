@@ -12,17 +12,20 @@ interface CustomToggleButtonProps {
   readonly toggleData: ToggleDataProps[];
   readonly selectedToggle: string | null;
   readonly setSelectedToggle: (value: string | null) => void;
+  readonly isDeselectionNotAllowed?: boolean;
 }
 
 const CustomToggleButton = ({
   toggleData,
   selectedToggle,
   setSelectedToggle,
+  isDeselectionNotAllowed = false,
 }: CustomToggleButtonProps) => {
   const handleChange = (
     event: React.MouseEvent<HTMLElement>,
     selected: string | null
   ) => {
+    if (isDeselectionNotAllowed && selected === null) return;
     setSelectedToggle(selected);
   };
 
