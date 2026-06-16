@@ -1,8 +1,8 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import ReflexDragger from "@/components/ReflexDragger";
-import LeftComponent from "@/components/LeftComponent";
-import RightComponent from "@/components/RightComponent";
-import RightComponentToggle from "@/components/RightComponentToggle";
+import TripsLeftPanel from "./TripsLeftPanel";
+import TripsRightPanel from "./TripsRightPanel";
+import TripsToggle from "./TripsToggle";
 
 const TripsPageLayout = () => {
   return (
@@ -16,18 +16,18 @@ const TripsPageLayout = () => {
       }}
     >
       <Box sx={{ position: "absolute", top: "53px", right: "3px", zIndex: 401 }}>
-        <RightComponentToggle />
+        <TripsToggle />
       </Box>
       <ReflexDragger
         reflexContainerOrientation="horizontal"
         leftpaneComponent={
           <Box sx={{ width: "100%", height: "100%" }}>
-            <LeftComponent />
+            <TripsLeftPanel />
           </Box>
         }
         rightpaneComponent={
           <Box sx={{ width: "100%", height: "100%" }}>
-            <RightComponent />
+            <TripsRightPanel />
           </Box>
         }
         minimumLeftPaneWidth={150}
