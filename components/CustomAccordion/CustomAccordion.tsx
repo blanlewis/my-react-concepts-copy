@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails, SxProps, Theme } from "@mui/material";
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 
 interface CustomAccordionProps {
   header: React.ReactNode;
   body: React.ReactNode;
+  accordionSx?: SxProps<Theme>;
 }
 
-const CustomAccordion = ({ header, body }: CustomAccordionProps) => {
+const CustomAccordion = ({ header, body, accordionSx }: CustomAccordionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -22,9 +23,17 @@ const CustomAccordion = ({ header, body }: CustomAccordionProps) => {
             margin: "0px",
             border:"1px solid blue"
         },
+        ...accordionSx,
       }}
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        sx={{
+          minHeight: "48px !important",
+          maxHeight: "48px",
+          "& .MuiAccordionSummary-content": { margin: "0px", alignItems: "center" },
+        }}
+      >
         {header}
       </AccordionSummary>
       <AccordionDetails>{body}</AccordionDetails>

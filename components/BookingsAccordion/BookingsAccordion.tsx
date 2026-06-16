@@ -57,58 +57,54 @@ const BOOKINGS_DATA: Booking[] = [
   },
 ];
 
-const LocationRow = ({ location, isOrigin }: { location: BookingLocation; isOrigin: boolean }) => (
-  <Box>
-    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <Typography sx={{ fontWeight: isOrigin ? 400 : 600, fontSize: "14px" }}>
-        {location.country} - {location.postalCode} {location.city}
+const BookingHeader = ({ booking }: { booking: Booking }) => (
+  <Box sx={{ display: "flex", alignItems: "center", width: "100%", gap: 1, overflow: "hidden" }}>
+    <Checkbox size="small" sx={{ p: 0, flexShrink: 0 }} onClick={(e) => e.stopPropagation()} />
+    <Box sx={{ borderLeft: "3px solid #4caf50", pl: 1, flex: 1, minWidth: 0 }}>
+      <Typography sx={{ fontSize: "13px", fontWeight: 400, lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        {booking.origin.country} - {booking.origin.postalCode} {booking.origin.city}
+      </Typography>
+      <Typography sx={{ fontSize: "13px", fontWeight: 600, lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        {booking.destination.country} - {booking.destination.postalCode} {booking.destination.city}
       </Typography>
     </Box>
-    <Typography sx={{ fontSize: "12px", color: "text.secondary" }}>
-      {location.company}
-      {location.timeRange !== "-" && (
-        <Box component="span" sx={{ mx: 0.5, color: "text.disabled" }}>•</Box>
-      )}
-      {location.timeRange !== "-" ? location.timeRange : ""}
-    </Typography>
-  </Box>
-);
-
-const BookingHeader = ({ booking }: { booking: Booking }) => (
-  <Box sx={{ display: "flex", width: "100%", gap: 1, alignItems: "flex-start" }}>
-    <Checkbox size="small" sx={{ mt: -0.5, ml: -1 }} onClick={(e) => e.stopPropagation()} />
-    <Box sx={{ borderLeft: "3px solid #4caf50", pl: 1, flex: 1, minWidth: 0 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}>
-        <LocationRow location={booking.origin} isOrigin />
-        <Typography sx={{ fontSize: "12px", color: "text.secondary", whiteSpace: "nowrap" }}>
-          {booking.pallets != null && `${booking.pallets} PLL`}
-          {booking.weight && `  ${booking.weight}`}
-          {booking.ldm && `  ${booking.ldm}`}
-          {"  -"}
-        </Typography>
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", mt: 0.5 }}>
-        <LocationRow location={booking.destination} isOrigin={false} />
-        <Typography sx={{ fontWeight: 700, fontSize: "14px", whiteSpace: "nowrap" }}>
-          {booking.price} {booking.currency}
-        </Typography>
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 0.5 }}>
-        {booking.hasWarning ? <WarningAmberIcon sx={{ fontSize: 16, color: "warning.main" }} /> : <Box />}
-        <Chip label={booking.bookingNumber} size="small" variant="outlined" sx={{ fontSize: "11px", height: 20, borderRadius: "4px" }} />
-      </Box>
-    </Box>
+    <Chip label={booking.bookingNumber} size="small" variant="outlined" sx={{ fontSize: "11px", height: 20, borderRadius: "4px", flexShrink: 0 }} />
   </Box>
 );
 
 const BookingBody = ({ booking }: { booking: Booking }) => (
-  <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-    <Typography variant="body2"><b>From:</b> {booking.origin.country}-{booking.origin.postalCode} {booking.origin.city} — {booking.origin.company}</Typography>
-    <Typography variant="body2"><b>To:</b> {booking.destination.country}-{booking.destination.postalCode} {booking.destination.city} — {booking.destination.company}</Typography>
-    {booking.pallets != null && <Typography variant="body2"><b>Pallets:</b> {booking.pallets}</Typography>}
-    {booking.weight && <Typography variant="body2"><b>Weight:</b> {booking.weight}</Typography>}
-    {booking.ldm && <Typography variant="body2"><b>LDM:</b> {booking.ldm}</Typography>}
-    <Typography variant="body2"><b>Price:</b> {booking.price} {booking.currency}</Typography>
+  <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+      <Box sx={{ flex: 1 }}>
+        <Typography variant="body2" sx={{ fontWeight: 400 }}>
+          {booking.origin.country} - {booking.origin.postalCode} {booking.origin.city}
+        </Typography>
+        <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "12px" }}>
+          {booking.origin.company} • {booking.origin.timeRange}
+        </Typography>
+        <Typography variant="body2" sx={{ fontWeight: 600, mt: 0.5 }}>
+          {booking.destination.country} - {booking.destination.postalCode} {booking.destination.city}
+        </Typography>
+        <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "12px" }}>
+          {booking.destination.company}
+          {booking.destination.timeRange !== "-" && ` • ${booking.destination.timeRange}`}
+        </Typography>
+      </Box>
+      <Box sx={{ textAlign: "right", flexShrink: 0 }}>
+        <Typography sx={{ fontSize: "12px", color: "text.secondary" }}>
+          {booking.pallets != null && `${booking.pallets} PLL`}
+          {booking.weight && `  ${booking.weight}`}
+          {booking.ldm && `  ${booking.ldm}`}
+        </Typography>
+        <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>
+          {booking.price} {booking.currency}
+        </Typography>
+      </Box>
+    </Box>
+    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      {booking.hasWarning ? <WarningAmberIcon sx={{ fontSize: 16, color: "warning.main" }} /> : <Box />}
+      <Chip label={booking.bookingNumber} size="small" variant="outlined" sx={{ fontSize: "11px", height: 20, borderRadius: "4px" }} />
+    </Box>
   </Box>
 );
 
@@ -128,6 +124,19 @@ const BookingsAccordion = ({ filterSuggestion }: BookingsAccordionProps) => {
           key={booking.id}
           header={<BookingHeader booking={booking} />}
           body={<BookingBody booking={booking} />}
+          accordionSx={{
+            borderTopLeftRadius: "0px",
+            borderTopRightRadius: "0px",
+            "&.MuiAccordion-root": {
+              borderTopLeftRadius: "0px",
+              borderTopRightRadius: "0px",
+            },
+            border: "2px solid transparent",
+            "&.Mui-expanded": {
+              border: "2px solid blue",
+              margin: "0px",
+            },
+          }}
         />
       ))}
     </Box>
