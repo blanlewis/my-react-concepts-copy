@@ -28,7 +28,7 @@ const RightComponentGridLayoutBottomPane = () => {
                 splitterWidth={8}
                 initialLeftFlex={0.5}
                 initialRightFlex={0.5}
-                isDraggerIconRequired={true}
+                isDraggerIconRequired={false}
             />
         </Box>
     );
@@ -54,7 +54,7 @@ const RightComponentGridLayout = () => {
                 splitterWidth={8}
                 initialLeftFlex={0.5}
                 initialRightFlex={0.5}
-                isDraggerIconRequired={true}
+                isDraggerIconRequired={false}
             />
         </Box>
     );

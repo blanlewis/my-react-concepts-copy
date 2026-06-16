@@ -3,6 +3,7 @@ import CustomTabs from "@/components/CustomTabs";
 import { useState } from "react";
 import BookingsAccordion from "@/components/BookingsAccordion";
 import BookingsBar from "@/components/BookingsBar";
+import { useCustomHook } from "@/app/utils/hook";
 
 enum BookingTabEnum {
   ALL = "all",
@@ -11,6 +12,12 @@ enum BookingTabEnum {
 
 const UpComponent = () => {
   const [value, setValue] = useState<string>(BookingTabEnum.ALL);
+  const { dossiers, activeDossierId, toggleBookingInDossier } = useCustomHook();
+
+  const activeDossier = dossiers.find(d => d.id === activeDossierId);
+  const checkedIds = activeDossier
+    ? [...activeDossier.bookingIds, ...activeDossier.pendingBookingIds]
+    : [];
 
   const tabsData = [
     {
@@ -18,7 +25,7 @@ const UpComponent = () => {
       value: BookingTabEnum.ALL,
       content: (
         <Box sx={{ height: "calc(100% - 84px)", maxHeight: "calc(100% - 84px)", overflowY: "auto" }}>
-          <BookingsAccordion />
+          <BookingsAccordion checkedIds={checkedIds} onToggle={toggleBookingInDossier} />
         </Box>
       ),
     },
@@ -27,7 +34,7 @@ const UpComponent = () => {
       value: BookingTabEnum.SUGGESTION,
       content: (
         <Box sx={{ height: "calc(100% - 69px)", maxHeight: "calc(100% - 69px)", overflowY: "auto" }}>
-          <BookingsAccordion filterSuggestion />
+          <BookingsAccordion filterSuggestion checkedIds={checkedIds} onToggle={toggleBookingInDossier} />
         </Box>
       ),
     },

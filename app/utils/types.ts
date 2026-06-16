@@ -20,12 +20,23 @@ interface UserType {
     role: string | null;
 }
 
+interface Dossier {
+    id: string;
+    name: string;
+    bookingIds: string[];
+    pendingBookingIds: string[];
+    isNew: boolean;
+}
+
 interface CustomHookState {
     nameAndRole: UserType[],
     activeUserByTypeTab: UserByTypeEnum|null,
     usersByTypeData: UserType[],
     isLoading: boolean,
     activeRightPanelToggle: RightComponentToggleOptionsEnum|null,
+    dossiers: Dossier[],
+    activeDossierId: string | null,
+    dossierCounter: number,
 }
 
 type CustomHookAction =
@@ -38,7 +49,10 @@ const customHookInitialState: CustomHookState = {
     usersByTypeData: [],
     isLoading: false,
     activeRightPanelToggle: RightComponentToggleOptionsEnum.LIST,
+    dossiers: [],
+    activeDossierId: null,
+    dossierCounter: 0,
 };
 
-export type { CustomHookState, CustomHookAction, UserType };
+export type { CustomHookState, CustomHookAction, UserType, Dossier };
 export { customHookInitialState, CustomHookActionEnum, UserByTypeEnum, RightComponentToggleOptionsEnum };
