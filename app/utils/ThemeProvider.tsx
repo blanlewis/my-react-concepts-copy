@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
@@ -19,12 +19,18 @@ export const useAppTheme = () => useContext(AppThemeContext);
 export const AppThemeProvider = ({ children }: { children: ReactNode }) => {
   const [mode, setMode] = useState<"light" | "dark">("light");
 
+  useEffect(() => {
+    document.documentElement.style.colorScheme = mode;
+  }, [mode]);
+
   const toggleTheme = () => setMode(prev => (prev === "light" ? "dark" : "light"));
 
   const theme = createTheme({ palette: { mode } });
 
+  const contextValue = useMemo(() => ({ mode, toggleTheme }), [mode]);
+
   return (
-    <AppThemeContext.Provider value={{ mode, toggleTheme }}>
+    <AppThemeContext.Provider value={contextValue}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}
