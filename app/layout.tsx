@@ -2,6 +2,7 @@ import "react-reflex/styles.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { CustomHookProvider } from "@/app/utils/context";
+import { AppThemeProvider } from "@/app/utils/ThemeProvider";
 import AppWrapper from "@/app/AppWrapper/AppWrapper";
 
 const geistSans = Geist({
@@ -31,9 +32,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
         <body className="min-h-full flex flex-col" suppressHydrationWarning>
-          <CustomHookProvider>
-            <AppWrapper>{children}</AppWrapper>
-          </CustomHookProvider>
+          <AppThemeProvider>
+            <CustomHookProvider>
+              <AppWrapper>{children}</AppWrapper>
+            </CustomHookProvider>
+          </AppThemeProvider>
         </body>
     </html>
   );

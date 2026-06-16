@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 interface ToggleDataProps {
   readonly label: string;
@@ -21,8 +22,11 @@ const CustomToggleButton = ({
   setSelectedToggle,
   isDeselectionNotAllowed = false,
 }: CustomToggleButtonProps) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   const handleChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     selected: string | null
   ) => {
     if (isDeselectionNotAllowed && selected === null) return;
@@ -38,10 +42,11 @@ const CustomToggleButton = ({
       sx={{
         height: 40,
         borderRadius: 2,
-        backgroundColor: "#FFF",
-        border: "1px solid #D5D7DA",
-        boxShadow:
-          "inset 0px 0px 0px 1px rgba(10, 13, 18, 0.18), inset 0px -2px 0px 0px rgba(10, 13, 18, 0.05), 0px 1px 2px 0px rgba(10, 13, 18, 0.05)",
+        backgroundColor: isDark ? theme.palette.grey[800] : "#FFF",
+        border: `1px solid ${isDark ? theme.palette.grey[700] : "#D5D7DA"}`,
+        boxShadow: isDark
+          ? "none"
+          : "inset 0px 0px 0px 1px rgba(10, 13, 18, 0.18), inset 0px -2px 0px 0px rgba(10, 13, 18, 0.05), 0px 1px 2px 0px rgba(10, 13, 18, 0.05)",
         "& .MuiToggleButtonGroup-firstButton": {
           borderTopLeftRadius: "8px",
           borderBottomLeftRadius: "8px",
@@ -52,7 +57,7 @@ const CustomToggleButton = ({
         },
       }}
     >
-      {toggleData.map(({ icon, label, value: toggleValue }) => (
+      {toggleData.map(({ icon, value: toggleValue }) => (
         <ToggleButton
           key={toggleValue}
           value={toggleValue}

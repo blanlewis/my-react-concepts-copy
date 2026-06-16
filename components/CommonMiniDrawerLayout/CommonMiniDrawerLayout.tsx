@@ -8,7 +8,6 @@ import {
   AppBar as MuiAppBar,
   Toolbar,
   List,
-  CssBaseline,
   Typography,
   Divider,
   IconButton,
@@ -24,7 +23,10 @@ import {
   ChevronRight as ChevronRightIcon,
   MoveToInbox as InboxIcon,
   Mail as MailIcon,
+  DarkMode as DarkModeIcon,
+  LightMode as LightModeIcon,
 } from "@mui/icons-material";
+import { useAppTheme } from "@/app/utils/ThemeProvider";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -205,6 +207,7 @@ interface MiniDrawerProps {
 
 const MiniDrawer = ({ open, onClose, primaryItems, secondaryItems }: MiniDrawerProps) => {
   const theme = useTheme();
+  const { mode, toggleTheme } = useAppTheme();
 
   return (
     <StyledDrawer variant="permanent" open={open}>
@@ -217,6 +220,34 @@ const MiniDrawer = ({ open, onClose, primaryItems, secondaryItems }: MiniDrawerP
       <NavList items={primaryItems} open={open} />
       <Divider />
       <NavList items={secondaryItems} open={open} />
+
+      <Box sx={{ mt: "auto" }}>
+        <Divider />
+        <List sx={{ p: 0 }}>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              onClick={toggleTheme}
+              sx={[
+                { minHeight: 48, px: 2.5 },
+                open ? { justifyContent: "initial" } : { justifyContent: "center" },
+              ]}
+            >
+              <ListItemIcon
+                sx={[
+                  { minWidth: 0, justifyContent: "center" },
+                  open ? { mr: 3 } : { mr: "auto" },
+                ]}
+              >
+                {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+              </ListItemIcon>
+              <ListItemText
+                primary={mode === "light" ? "Dark Mode" : "Light Mode"}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Box>
     </StyledDrawer>
   );
 };
@@ -261,7 +292,6 @@ const CommonMiniDrawerLayout = ({
 
   return (
     <Box sx={{ display: "flex" }}>
-      <CssBaseline />
 
       <AppTopBar
         title={appHeaderTitle}
