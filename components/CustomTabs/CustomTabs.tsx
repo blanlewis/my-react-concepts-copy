@@ -33,6 +33,7 @@ const CustomTabs = ({
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList
             onChange={handleChange}
+            sx={{ minHeight: "36px" }}
           >
             {tabsData.map(({ label, value: tabValue }) => (
               <Tab
@@ -41,6 +42,7 @@ const CustomTabs = ({
                 label={label}
                 disableRipple
                 disableFocusRipple
+                sx={{ minHeight: "36px", py: 0.5, px: 1.5, fontSize: "12px" }}
               />
             ))}
           </TabList>
