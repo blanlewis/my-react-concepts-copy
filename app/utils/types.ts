@@ -36,6 +36,7 @@ enum UserByTypeEnum {
 enum RightComponentToggleOptionsEnum {
     MAP = "Map",
     GRID = "Grid",
+    LIST = "List",
 }
 
 export type { CustomHookState, CustomHookAction, UserType };
