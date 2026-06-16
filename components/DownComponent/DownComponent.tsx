@@ -20,7 +20,7 @@ const DownComponent = () => {
   };
 
   const userList = (
-    <Box sx={{ height: "calc(100% - 48px)", maxHeight: "calc(100% - 48px)", overflowY: "auto" }}>
+    <Box sx={{ height: "calc(100% - 36px)", maxHeight: "calc(100% - 36px)", overflowY: "auto" }}>
       {isLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
           <CustomSpinnerLoader />

@@ -17,7 +17,7 @@ const UpComponent = () => {
       label: "All",
       value: BookingTabEnum.ALL,
       content: (
-        <Box sx={{ height: "calc(100% - 96px)", maxHeight: "calc(100% - 69px)", overflowY: "auto" }}>
+        <Box sx={{ height: "calc(100% - 84px)", maxHeight: "calc(100% - 84px)", overflowY: "auto" }}>
           <BookingsAccordion />
         </Box>
       ),
