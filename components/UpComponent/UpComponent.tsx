@@ -3,32 +3,30 @@ import CustomTabs from "@/components/CustomTabs";
 import { useState } from "react";
 import CustomAccordion from "@/components/CustomAccordion";
 
-enum PlanningTabEnum {
+enum BookingTabEnum {
   ALL = "all",
-  PLANNED = "planned",
-  NOT_PLANNED = "not-planned",
-  PRE_PLANNED = "pre-planned",
+  SUGGESTION = "suggestion",
 }
 
-interface PlanningItem {
+interface BookingItem {
   name: string;
   description: string;
-  status: PlanningTabEnum.PLANNED | PlanningTabEnum.NOT_PLANNED | PlanningTabEnum.PRE_PLANNED;
+  isSuggestion: boolean;
 }
 
-const PLANNING_ITEMS: PlanningItem[] = [
-  { name: "Design system audit", description: "Review all components for consistency", status: PlanningTabEnum.PLANNED },
-  { name: "API integration", description: "Connect backend endpoints to frontend", status: PlanningTabEnum.PLANNED },
-  { name: "User testing round 2", description: "Schedule sessions with 5 participants", status: PlanningTabEnum.PLANNED },
-  { name: "Performance profiling", description: "Identify render bottlenecks in dashboard", status: PlanningTabEnum.NOT_PLANNED },
-  { name: "Accessibility audit", description: "WCAG 2.1 AA compliance check", status: PlanningTabEnum.NOT_PLANNED },
-  { name: "Dark mode support", description: "Extend theme tokens for dark palette", status: PlanningTabEnum.NOT_PLANNED },
-  { name: "Q3 roadmap review", description: "Align features with product strategy", status: PlanningTabEnum.PRE_PLANNED },
-  { name: "Onboarding flow redesign", description: "Reduce drop-off in first-time setup", status: PlanningTabEnum.PRE_PLANNED },
-  { name: "Mobile breakpoints", description: "Responsive layout for small screens", status: PlanningTabEnum.PRE_PLANNED },
+const BOOKING_ITEMS: BookingItem[] = [
+  { name: "Design system audit", description: "Review all components for consistency", isSuggestion: false },
+  { name: "API integration", description: "Connect backend endpoints to frontend", isSuggestion: false },
+  { name: "User testing round 2", description: "Schedule sessions with 5 participants", isSuggestion: false },
+  { name: "Performance profiling", description: "Identify render bottlenecks in dashboard", isSuggestion: true },
+  { name: "Accessibility audit", description: "WCAG 2.1 AA compliance check", isSuggestion: true },
+  { name: "Dark mode support", description: "Extend theme tokens for dark palette", isSuggestion: true },
+  { name: "Q3 roadmap review", description: "Align features with product strategy", isSuggestion: false },
+  { name: "Onboarding flow redesign", description: "Reduce drop-off in first-time setup", isSuggestion: true },
+  { name: "Mobile breakpoints", description: "Responsive layout for small screens", isSuggestion: false },
 ];
 
-const PlanningList = ({ items }: { items: PlanningItem[] }) => (
+const BookingList = ({ items }: { items: BookingItem[] }) => (
   <Box sx={{ height: "calc(100% - 69px)", maxHeight: "calc(100% - 69px)", overflowY: "auto" }}>
     {items.map((item, index) => (
       <CustomAccordion key={index} header={item.name} body={item.description} />
@@ -37,13 +35,11 @@ const PlanningList = ({ items }: { items: PlanningItem[] }) => (
 );
 
 const UpComponent = () => {
-  const [value, setValue] = useState<string>(PlanningTabEnum.ALL);
+  const [value, setValue] = useState<string>(BookingTabEnum.ALL);
 
   const tabsData = [
-    { label: "All", value: PlanningTabEnum.ALL, content: <PlanningList items={PLANNING_ITEMS} /> },
-    { label: "Planned", value: PlanningTabEnum.PLANNED, content: <PlanningList items={PLANNING_ITEMS.filter(i => i.status === PlanningTabEnum.PLANNED)} /> },
-    { label: "Not-planned", value: PlanningTabEnum.NOT_PLANNED, content: <PlanningList items={PLANNING_ITEMS.filter(i => i.status === PlanningTabEnum.NOT_PLANNED)} /> },
-    { label: "Pre-planned", value: PlanningTabEnum.PRE_PLANNED, content: <PlanningList items={PLANNING_ITEMS.filter(i => i.status === PlanningTabEnum.PRE_PLANNED)} /> },
+    { label: "All", value: BookingTabEnum.ALL, content: <BookingList items={BOOKING_ITEMS} /> },
+    { label: "Suggestion", value: BookingTabEnum.SUGGESTION, content: <BookingList items={BOOKING_ITEMS.filter(i => i.isSuggestion)} /> },
   ];
 
   return (
