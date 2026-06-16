@@ -63,13 +63,13 @@ const BookingBody = ({ booking }: { booking: Booking }) => (
 interface BookingsAccordionProps {
   filterSuggestion?: boolean;
   checkedIds?: string[];
+  excludedIds?: string[];
   onToggle?: (id: string) => void;
 }
 
-const BookingsAccordion = ({ filterSuggestion, checkedIds = [], onToggle = () => {} }: BookingsAccordionProps) => {
-  const items = filterSuggestion
-    ? BOOKINGS_DATA.filter((b) => b.isSuggestion)
-    : BOOKINGS_DATA;
+const BookingsAccordion = ({ filterSuggestion, checkedIds = [], excludedIds = [], onToggle = () => {} }: BookingsAccordionProps) => {
+  const items = (filterSuggestion ? BOOKINGS_DATA.filter((b) => b.isSuggestion) : BOOKINGS_DATA)
+    .filter((b) => !excludedIds.includes(b.id));
 
   return (
     <Box>
@@ -91,9 +91,7 @@ const BookingsAccordion = ({ filterSuggestion, checkedIds = [], onToggle = () =>
               borderTopLeftRadius: "0px",
               borderTopRightRadius: "0px",
             },
-            border: "2px solid transparent",
             "&.Mui-expanded": {
-              border: "2px solid blue",
               margin: "0px",
             },
           }}
