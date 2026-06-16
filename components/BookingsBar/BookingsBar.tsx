@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { Box, Divider, IconButton, Menu, MenuItem, Typography } from "@mui/material";
+import { useRef, useState, useMemo } from "react";
+import { Box, Button, Divider, Menu, MenuItem, Typography } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import useResizeObserver from "use-resize-observer";
 import CustomButton from "@/components/CustomButton";
 
 const FILTER_LABELS = [
@@ -15,44 +16,32 @@ const FILTER_LABELS = [
   "Region",
 ];
 
-const MORE_BTN_WIDTH = 36 + 8; // icon button + gap
 const GAP = 4;
+const MORE_BTN_WIDTH = 32 + GAP; // bordered icon button + gap
 
 const BookingsBar = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState(FILTER_LABELS.length);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    const measure = measureRef.current;
-    if (!container || !measure) return;
+  const { ref: containerRef, width: containerWidth = 0 } = useResizeObserver<HTMLDivElement>();
 
-    const recalc = () => {
-      const available = container.offsetWidth;
-      const children = Array.from(measure.children) as HTMLElement[];
-      let used = 0;
-      let count = 0;
+  const visibleCount = useMemo(() => {
+    if (!measureRef.current || containerWidth === 0) return FILTER_LABELS.length;
 
-      for (let i = 0; i < children.length; i++) {
-        const btnWidth = children[i].offsetWidth + GAP;
-        const remainingItems = children.length - i - 1;
-        const spaceNeeded = used + btnWidth + (remainingItems > 0 ? MORE_BTN_WIDTH : 0);
+    const children = Array.from(measureRef.current.children) as HTMLElement[];
+    let used = 0;
+    let count = 0;
 
-        if (spaceNeeded > available) break;
-        used += btnWidth;
-        count++;
-      }
+    for (let i = 0; i < children.length; i++) {
+      const btnWidth = children[i].offsetWidth + GAP;
+      const hasMore = i < children.length - 1;
+      if (used + btnWidth + (hasMore ? MORE_BTN_WIDTH : 0) > containerWidth) break;
+      used += btnWidth;
+      count++;
+    }
 
-      setVisibleCount(count);
-    };
-
-    const ro = new ResizeObserver(recalc);
-    ro.observe(container);
-    recalc();
-    return () => ro.disconnect();
-  }, []);
+    return count;
+  }, [containerWidth]);
 
   const visibleLabels = FILTER_LABELS.slice(0, visibleCount);
   const overflowLabels = FILTER_LABELS.slice(visibleCount);
@@ -68,16 +57,16 @@ const BookingsBar = () => {
         borderBottom: "1px solid",
         borderColor: "divider",
         px: 1,
-        gap: 0.5,
+        gap: 1,
       }}
     >
-      <Typography sx={{ fontSize: "14px", fontWeight: 600, whiteSpace: "nowrap", mr: 0.5, flexShrink: 0 }}>
+      <Typography sx={{ fontSize: "14px", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
         Bookings
       </Typography>
 
       <Divider orientation="vertical" flexItem sx={{ my: "auto", height: "20px" }} />
 
-      {/* Hidden div — all buttons rendered here to measure their natural widths */}
+      {/* Invisible measurement div — renders all buttons to get their natural widths */}
       <Box
         ref={measureRef}
         aria-hidden="true"
@@ -94,7 +83,7 @@ const BookingsBar = () => {
         ))}
       </Box>
 
-      {/* Visible buttons container — observed for width changes */}
+      {/* Visible buttons — container width is observed by use-resize-observer */}
       <Box
         ref={containerRef}
         sx={{ display: "flex", flex: 1, alignItems: "center", gap: `${GAP}px`, overflow: "hidden" }}
@@ -104,17 +93,18 @@ const BookingsBar = () => {
         ))}
       </Box>
 
-      {/* Overflow ⋮ button */}
+      {/* Overflow ⋮ — styled to match CustomButton (outlined, same height) */}
       {overflowLabels.length > 0 && (
         <>
-          <Divider orientation="vertical" flexItem sx={{ my: "auto", height: "20px" }} />
-          <IconButton
+          <Button
             size="small"
+            variant="outlined"
+            disableRipple
             onClick={(e) => setAnchorEl(e.currentTarget)}
-            sx={{ flexShrink: 0 }}
+            sx={{ minWidth: 0, px: 0.5, height: "28px", flexShrink: 0 }}
           >
-            <MoreVertIcon sx={{ fontSize: "18px" }} />
-          </IconButton>
+            <MoreVertIcon sx={{ fontSize: "16px" }} />
+          </Button>
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}

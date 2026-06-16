@@ -20,7 +20,8 @@
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1",
     "react-leaflet": "^5.0.0-rc.2",
-    "react-reflex": "^5.0.5"
+    "react-reflex": "^5.0.5",
+    "use-resize-observer": "^9.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
