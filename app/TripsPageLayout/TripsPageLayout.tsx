@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import ReflexDragger from "@/components/ReflexDragger";
 import LeftComponent from "@/components/LeftComponent";
 import RightComponent from "@/components/RightComponent";
@@ -30,8 +30,8 @@ const TripsPageLayout = () => {
             <RightComponent />
           </Box>
         }
-        minimumLeftPaneWidth={500}
-        minimumRightPaneWidth={500}
+        minimumLeftPaneWidth={150}
+        minimumRightPaneWidth={150}
         splitterWidth={10}
         initialLeftFlex={0.5}
         initialRightFlex={0.5}

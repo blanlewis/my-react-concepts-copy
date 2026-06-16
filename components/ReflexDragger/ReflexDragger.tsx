@@ -40,6 +40,10 @@ const ReflexDragger = ({
             height: "100%",
           },
 
+          ".reflex-element.horizontal": {
+            width: "100%",
+          },
+
           ".custom-reflex-splitter": {
             backgroundColor: "rgb(233, 241, 248)",
           },
