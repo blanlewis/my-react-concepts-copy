@@ -2,6 +2,24 @@ enum CustomHookActionEnum {
     SET_CUSTOM_HOOK_DATA = "SET_CUSTOM_HOOK_DATA",
     SET_NAME_AND_ROLE = "SET_NAME_AND_ROLE",
 }
+
+enum UserByTypeEnum {
+    DEV_EMPLOYEE = "DEV_EMPLOYEE",
+    PRODUCT_TEAM_EMPLOYEE = "PRODUCT_TEAM_EMPLOYEE",
+    TOP_MANAGEMENT= "TOP_MANAGEMENT",
+}
+
+enum RightComponentToggleOptionsEnum {
+    MAP = "Map",
+    GRID = "Grid",
+    LIST = "List",
+}
+
+interface UserType {
+    name: string | null;
+    role: string | null;
+}
+
 interface CustomHookState {
     nameAndRole: UserType[],
     activeUserByTypeTab: UserByTypeEnum|null,
@@ -19,25 +37,8 @@ const customHookInitialState: CustomHookState = {
     activeUserByTypeTab: null,
     usersByTypeData: [],
     isLoading: false,
-    activeRightPanelToggle: null,
+    activeRightPanelToggle: RightComponentToggleOptionsEnum.LIST,
 };
-
-interface UserType {
-    name: string | null;
-    role: string | null;
-}
-
-enum UserByTypeEnum {
-    DEV_EMPLOYEE = "DEV_EMPLOYEE",
-    PRODUCT_TEAM_EMPLOYEE = "PRODUCT_TEAM_EMPLOYEE",
-    TOP_MANAGEMENT= "TOP_MANAGEMENT",
-}
-
-enum RightComponentToggleOptionsEnum {
-    MAP = "Map",
-    GRID = "Grid",
-    LIST = "List",
-}
 
 export type { CustomHookState, CustomHookAction, UserType };
 export { customHookInitialState, CustomHookActionEnum, UserByTypeEnum, RightComponentToggleOptionsEnum };
