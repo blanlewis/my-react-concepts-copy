@@ -1,8 +1,17 @@
 import { useContext} from "react";
 import { CustomHookContext } from "./context";
 import { CustomHookState,CustomHookActionEnum, UserByTypeEnum,RightComponentToggleOptionsEnum} from "./types";
-// import { customHookInitialFetch } from "./service";
-import { getUsersFromApi, getUsersByTypeFromApi } from "./service";
+
+const HARDCODED_USERS = [
+    { name: "Alice Jensen", role: UserByTypeEnum.DEV_EMPLOYEE },
+    { name: "Bob Andersen", role: UserByTypeEnum.DEV_EMPLOYEE },
+    { name: "Clara Nielsen", role: UserByTypeEnum.DEV_EMPLOYEE },
+    { name: "David Møller", role: UserByTypeEnum.PRODUCT_TEAM_EMPLOYEE },
+    { name: "Emma Christensen", role: UserByTypeEnum.PRODUCT_TEAM_EMPLOYEE },
+    { name: "Frank Larsen", role: UserByTypeEnum.PRODUCT_TEAM_EMPLOYEE },
+    { name: "Grace Hansen", role: UserByTypeEnum.TOP_MANAGEMENT },
+    { name: "Henrik Pedersen", role: UserByTypeEnum.TOP_MANAGEMENT },
+];
 
 const useCustomHook = () => {
     const context = useContext(CustomHookContext);
@@ -10,31 +19,20 @@ const useCustomHook = () => {
         throw new Error("useCustomHook must be used within a CustomHookProvider");
     }
     const { state, dispatch } = context;
-    // This was basic learning.
-    // const loadCustomHookData = async () => {
-    //     const data = await customHookInitialFetch();
-    //     console.log("Fetched data:", data);
-    //     if (data) setCustomHookState(data);
-    // };
 
-    const fetchCustomHookData = async () => {
-        try {
-            const users = await getUsersFromApi();
-            const usersByType = await getUsersByTypeFromApi(null);
-            setCustomHookState({ nameAndRole: users, activeUserByTypeTab: null, usersByTypeData: usersByType });
-        } catch (error) {
-            console.warn("Failed to fetch user:", error);
-        }
+    const fetchCustomHookData = () => {
+        setCustomHookState({ nameAndRole: HARDCODED_USERS, activeUserByTypeTab: null, usersByTypeData: HARDCODED_USERS });
     }
 
     const setCustomHookState=(customHookState:Partial<CustomHookState>)=>{
         dispatch({ type: CustomHookActionEnum.SET_CUSTOM_HOOK_DATA, payload: customHookState });
     }
 
-    const setActiveUserByTypeTab = async (selectedUserByTypeTab: UserByTypeEnum | null) => {
-        setCustomHookState({ activeUserByTypeTab: selectedUserByTypeTab, isLoading: true });
-        const usersByType = await getUsersByTypeFromApi(selectedUserByTypeTab);
-        setCustomHookState({ usersByTypeData: usersByType, isLoading: false });
+    const setActiveUserByTypeTab = (selectedUserByTypeTab: UserByTypeEnum | null) => {
+        const filtered = selectedUserByTypeTab
+            ? HARDCODED_USERS.filter(u => u.role === selectedUserByTypeTab)
+            : HARDCODED_USERS;
+        setCustomHookState({ activeUserByTypeTab: selectedUserByTypeTab, usersByTypeData: filtered, isLoading: false });
     }
 
     const setIsLoading = (isLoading: boolean) => {
