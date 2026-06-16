@@ -16,9 +16,7 @@ const AppWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <CommonMiniDrawerLayout
       appHeaderTitle="Learning Next JS"
-      firstListItems={[
-        { label: "Next JS Basics", route: "/nextJsBasics" },
-      ]}
+      firstListItems={[]}
       secondaryListItems={[]}
       appBody={children}
     />

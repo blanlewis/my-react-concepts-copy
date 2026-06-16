@@ -1,7 +1,6 @@
 "use client";
-import MyReactConceptLayout from "@/app/MyReactConceptLayout/MyReactConceptLayout";
+import TripsPageLayout from "@/app/TripsPageLayout";
 
 export default function Home() {
-  return <MyReactConceptLayout />;
+  return <TripsPageLayout />;
 }
-

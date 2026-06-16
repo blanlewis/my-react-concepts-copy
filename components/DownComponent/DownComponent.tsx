@@ -5,17 +5,13 @@ import CustomTabs from "@/components/CustomTabs";
 import { useState } from "react";
 import { useCustomHook } from "@/app/utils/hook";
 import CustomAccordion from "@/components/CustomAccordion";
-import { UserByTypeEnum, RightComponentToggleOptionsEnum } from "@/app/utils/types";
+import { UserByTypeEnum } from "@/app/utils/types";
 import CustomSpinnerLoader from "@/components/CustomSpinnerLoader";
-import dynamic from "next/dynamic";
-import RightComponentGridLayout from "@/components/RightComponentGridLayout";
-
-const MapComponent = dynamic(() => import("@/components/MapComponent"), { ssr: false });
 
 const ALL_TAB_VALUE = "ALL";
 
 const DownComponent = () => {
-  const { usersByTypeData, isLoading, activeRightPanelToggle, setActiveUserByTypeTab } = useCustomHook();
+  const { usersByTypeData, isLoading, setActiveUserByTypeTab } = useCustomHook();
   const [value, setValue] = useState<string>(ALL_TAB_VALUE);
 
   const handleTabChange = (newValue: string) => {
