@@ -29,8 +29,8 @@ const CustomAccordion = ({ header, body, accordionSx }: CustomAccordionProps) =>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         sx={{
-          minHeight: "48px !important",
-          maxHeight: "48px",
+          minHeight: "36px !important",
+          maxHeight: "36px",
           "& .MuiAccordionSummary-content": { margin: "0px", alignItems: "center" },
         }}
       >

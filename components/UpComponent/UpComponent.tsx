@@ -25,7 +25,7 @@ const UpComponent = () => {
       label: "All",
       value: BookingTabEnum.ALL,
       content: (
-        <Box sx={{ height: "calc(100% - 84px)", maxHeight: "calc(100% - 84px)", overflowY: "auto" }}>
+        <Box sx={{ height: "calc(100% - 73px)", maxHeight: "calc(100% - 73px)", overflowY: "auto" }}>
           <BookingsAccordion checkedIds={checkedIds} excludedIds={acceptedBookingIds} onToggle={toggleBookingInDossier} />
         </Box>
       ),

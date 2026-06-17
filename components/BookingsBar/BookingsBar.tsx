@@ -1,13 +1,10 @@
 "use client";
 
-import { useRef, useState, useMemo, MouseEvent } from "react";
-import { Box, Button, Divider, Menu, MenuItem, Typography } from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useRef, useState, useMemo } from "react";
+import { Box, Button, Menu, MenuItem, Typography } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import useResizeObserver from "use-resize-observer";
-
-// ── Filter item types ──────────────────────────────────────────────────────────
+import { DateFilter, DropdownFilter, MeasureItem } from "@/components/BookingFilters/BookingFilters";
 
 type FilterItem =
   | { type: "date"; label: string }
@@ -25,89 +22,8 @@ const FILTER_ITEMS: FilterItem[] = [
   { type: "date",     label: "Departure" },
 ];
 
-// ── Sub-components ─────────────────────────────────────────────────────────────
-
-const BTN_SX = {
-  textTransform: "none",
-  fontSize: "12px",
-  whiteSpace: "nowrap",
-  px: 1,
-  minWidth: 0,
-  height: "25px",
-  flexShrink: 0,
-  borderColor: "#D5D7DA",
-  "&:hover": { borderColor: "#b0b3b8" },
-} as const;
-
-const DateFilter = ({ label }: { label: string }) => (
-  <Button
-    size="small"
-    variant="outlined"
-    startIcon={<CalendarTodayIcon sx={{ fontSize: "14px !important" }} />}
-    sx={{ ...BTN_SX, color: "text.secondary", gap: 0 }}
-  >
-    <Typography component="span" sx={{ fontWeight: 600, fontSize: "12px", color: "text.primary", mr: 0.5 }}>
-      {label}
-    </Typography>
-    Select dates
-  </Button>
-);
-
-const DropdownFilter = ({ label, options }: { label: string; options: string[] }) => {
-  const [anchor, setAnchor] = useState<null | HTMLElement>(null);
-  const [selected, setSelected] = useState<string | null>(null);
-
-  const handleOpen = (e: MouseEvent<HTMLButtonElement>) => setAnchor(e.currentTarget);
-  const handleClose = () => setAnchor(null);
-  const handleSelect = (opt: string) => { setSelected(opt === selected ? null : opt); handleClose(); };
-
-  return (
-    <>
-      <Button
-        size="small"
-        variant="outlined"
-        endIcon={<KeyboardArrowDownIcon sx={{ fontSize: "16px !important" }} />}
-        onClick={handleOpen}
-        sx={{ ...BTN_SX, fontWeight: selected ? 600 : 400, color: selected ? "primary.main" : "text.primary" }}
-      >
-        {selected ?? label}
-      </Button>
-      <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={handleClose} slotProps={{ paper: { sx: { mt: 0.5 } } }}>
-        {options.map(opt => (
-          <MenuItem key={opt} selected={opt === selected} onClick={() => handleSelect(opt)} sx={{ fontSize: "13px" }}>
-            {opt}
-          </MenuItem>
-        ))}
-      </Menu>
-    </>
-  );
-};
-
-// ── Measure element (lightweight, no state) ────────────────────────────────────
-
-const MeasureItem = ({ item }: { item: FilterItem }) => (
-  <Box
-    sx={{
-      display: "inline-flex",
-      alignItems: "center",
-      fontSize: "12px",
-      px: 1,
-      height: "25px",
-      whiteSpace: "nowrap",
-      gap: 0.5,
-    }}
-  >
-    {item.type === "date" && <CalendarTodayIcon sx={{ fontSize: "14px" }} />}
-    {item.label}
-    {item.type === "date" && <Typography component="span" sx={{ fontSize: "12px", ml: 0.5 }}>Select dates</Typography>}
-    {item.type === "dropdown" && <KeyboardArrowDownIcon sx={{ fontSize: "16px" }} />}
-  </Box>
-);
-
 const GAP = 4;
 const MORE_BTN_WIDTH = 36;
-
-// ── BookingsBar ────────────────────────────────────────────────────────────────
 
 const BookingsBar = () => {
   const measureRef = useRef<HTMLDivElement>(null);
@@ -140,7 +56,7 @@ const BookingsBar = () => {
         display: "flex",
         alignItems: "center",
         width: "100%",
-        height: "48px",
+        height: "36px",
         flexShrink: 0,
         borderBottom: "1px solid",
         borderColor: "divider",
@@ -148,13 +64,11 @@ const BookingsBar = () => {
         gap: `${GAP}px`,
       }}
     >
-      <Typography sx={{ fontSize: "14px", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
+      {/* <Typography sx={{ fontSize: "14px", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
         Bookings
-      </Typography>
+      </Typography> */}
 
-      <Divider orientation="vertical" flexItem sx={{ my: "auto", height: "20px" }} />
-
-      {/* Hidden measurement div — static items so no stale-DOM issue */}
+      {/* Hidden measurement div */}
       <Box
         ref={measureRef}
         aria-hidden="true"
@@ -172,7 +86,7 @@ const BookingsBar = () => {
         )}
       </Box>
 
-      {/* ⋮ overflow — always rendered for stable width */}
+      {/* ⋮ overflow */}
       <Button
         size="small"
         variant="outlined"
@@ -182,12 +96,7 @@ const BookingsBar = () => {
       >
         <MoreVertIcon sx={{ fontSize: "16px" }} />
       </Button>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={() => setAnchorEl(null)}
-        slotProps={{ paper: { sx: { mt: 0.5, minWidth: 180 } } }}
-      >
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)} slotProps={{ paper: { sx: { mt: 0.5, minWidth: 180 } } }}>
         {overflowItems.map(item => (
           <MenuItem key={item.label} onClick={() => setAnchorEl(null)} sx={{ fontSize: "13px" }}>
             {item.label}

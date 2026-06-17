@@ -12,6 +12,7 @@ import { useCustomHook } from "@/app/utils/hook";
 import { Dossier } from "@/app/utils/types";
 import { Booking, BOOKINGS_DATA } from "@/app/utils/bookingsData";
 import CustomToggleButton from "@/components/CustomToggleButton";
+import { DateFilter, DropdownFilter } from "@/components/BookingFilters/BookingFilters";
 
 const FILTER_TOGGLE_DATA = [
   { label: "All",       value: "all",       icon: <Typography sx={{ fontSize: "11px", fontWeight: 500, lineHeight: 1 }}>All</Typography> },
@@ -183,7 +184,7 @@ const DownComponent = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", overflow: "hidden" }}>
-      <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 0.5, borderBottom: "1px solid", borderColor: "divider", flexShrink: 0 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, px: 1, py: 0.5, borderBottom: "1px solid", borderColor: "divider", flexShrink: 0 }}>
         <CustomToggleButton
           toggleData={FILTER_TOGGLE_DATA}
           selectedToggle={dossierFilter}
@@ -192,6 +193,11 @@ const DownComponent = () => {
           height={24}
           autoWidth
         />
+        <Divider orientation="vertical" flexItem sx={{ my: "auto", height: "18px" }} />
+        <DateFilter label="Pickup" />
+        <DateFilter label="Delivery" />
+        <DropdownFilter label="Type" options={["Standard", "Express", "Economy", "Fragile"]} />
+        <DropdownFilter label="My Trips" options={["Trip A", "Trip B", "Trip C"]} />
       </Box>
       <TabContext value={activeTabValue}>
         <Box sx={{ borderBottom: "1px solid", borderColor: "divider", display: "flex", alignItems: "center", flexShrink: 0 }}>
@@ -213,8 +219,17 @@ const DownComponent = () => {
           {/* flex-1 container: TabList + + button */}
           <Box ref={containerRef} sx={{ flex: 1, minWidth: 0, overflow: "hidden", display: "flex", alignItems: "center" }}>
             <TabList
+              variant="scrollable"
+              scrollButtons={false}
               onChange={(_, v) => setActiveDossierId(v)}
-              sx={{ minHeight: "36px" }}
+              sx={{
+                minHeight: "36px",
+                "& .MuiTabs-scroller": {
+                  overflowX: "auto !important",
+                  "&::-webkit-scrollbar": { height: "3px" },
+                  "&::-webkit-scrollbar-thumb": { backgroundColor: "#c1c1c1", borderRadius: "999px" },
+                },
+              }}
             >
               {visibleDossiers.map(d => (
                 <Tab
