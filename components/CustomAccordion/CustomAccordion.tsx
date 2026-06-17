@@ -18,10 +18,10 @@ const CustomAccordion = ({ header, body, accordionSx }: CustomAccordionProps) =>
       expanded={isExpanded}
       onChange={() => setIsExpanded((prev) => !prev)}
       sx={{
-        boxShadow: "0px 1px 3px rgba(10, 13, 18, 0.1)",
+        boxShadow: "none",
+        "&::before": { opacity: "1 !important" },
         "&.Mui-expanded": {
-            margin: "0px",
-            border:"1px solid blue"
+          margin: "0px",
         },
         ...accordionSx,
       }}
