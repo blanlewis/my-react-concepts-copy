@@ -44,7 +44,12 @@ const useCustomHook = () => {
     };
 
     const setActiveDossierId = (id: string | null) => {
-        setCustomHookState({ activeDossierId: id });
+        const { dossiers, activeDossierId } = state;
+        // Clear pending selections from the dossier we're leaving
+        const updatedDossiers = dossiers.map(d =>
+            d.id === activeDossierId ? { ...d, pendingBookingIds: [] } : d
+        );
+        setCustomHookState({ dossiers: updatedDossiers, activeDossierId: id });
     };
 
     // When checkbox is clicked in UpComponent:

@@ -54,7 +54,7 @@ const DossierTabContent = ({
 }) => {
   const confirmedBookings = BOOKINGS_DATA.filter(b => dossier.bookingIds.includes(b.id));
   const pendingBookings = BOOKINGS_DATA.filter(b => dossier.pendingBookingIds.includes(b.id));
-  const hasPendingOrNew = dossier.isNew || pendingBookings.length > 0;
+  const hasPendingOrNew = pendingBookings.length > 0;
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
