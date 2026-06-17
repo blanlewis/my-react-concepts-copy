@@ -196,11 +196,11 @@ const DownComponent = () => {
       <TabContext value={activeTabValue}>
         <Box sx={{ borderBottom: "1px solid", borderColor: "divider", display: "flex", alignItems: "center", flexShrink: 0 }}>
 
-          {/* Hidden measurement div — matches tab label styling exactly */}
+          {/* Hidden measurement div — fixed + off-screen so it never affects page layout */}
           <Box
             ref={measureRef}
             aria-hidden="true"
-            sx={{ position: "absolute", visibility: "hidden", pointerEvents: "none", display: "flex" }}
+            sx={{ position: "fixed", top: -9999, left: 0, visibility: "hidden", pointerEvents: "none", display: "flex" }}
           >
             {dossiers.map(d => (
               <Box key={d.id} sx={{ px: 1.5, fontSize: "12px", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 0.5 }}>

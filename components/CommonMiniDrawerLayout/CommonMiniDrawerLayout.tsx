@@ -267,6 +267,7 @@ const AppBody = ({ children, drawerOpen }: AppBodyProps) => (
       width: `calc(100% - ${drawerOpen ? DRAWER_WIDTH : DRAWER_COLLAPSED_WIDTH}px)`,
       height: `calc(100vh - ${TOOLBAR_HEIGHT}px)`,
       maxHeight: `calc(100vh - ${TOOLBAR_HEIGHT}px)`,
+      overflow: "hidden",
     }}
   >
     {children}

@@ -158,7 +158,7 @@ const BookingsBar = () => {
       <Box
         ref={measureRef}
         aria-hidden="true"
-        sx={{ position: "absolute", visibility: "hidden", pointerEvents: "none", display: "flex", gap: `${GAP}px` }}
+        sx={{ position: "fixed", top: -9999, left: 0, visibility: "hidden", pointerEvents: "none", display: "flex", gap: `${GAP}px` }}
       >
         {FILTER_ITEMS.map(item => <MeasureItem key={item.label} item={item} />)}
       </Box>
