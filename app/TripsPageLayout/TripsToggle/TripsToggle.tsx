@@ -10,9 +10,9 @@ const TripsToggle = () => {
   const { activeRightPanelToggle, setActiveRightPanelToggle } = useCustomHook();
 
   const toggleData = [
-    { label: "Map", icon: <LayersIcon sx={{ display: "flex" }} />, value: RightComponentToggleOptionsEnum.MAP },
-    { label: "Grid", icon: <ViewComfyIcon sx={{ display: "flex" }} />, value: RightComponentToggleOptionsEnum.GRID },
     { label: "List", icon: <ViewHeadlineIcon sx={{ display: "flex" }} />, value: RightComponentToggleOptionsEnum.LIST },
+    { label: "Grid", icon: <ViewComfyIcon sx={{ display: "flex" }} />, value: RightComponentToggleOptionsEnum.GRID },
+    { label: "Map", icon: <LayersIcon sx={{ display: "flex" }} />, value: RightComponentToggleOptionsEnum.MAP },
   ];
 
   return (
