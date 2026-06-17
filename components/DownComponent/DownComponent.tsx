@@ -1,6 +1,8 @@
 "use client";
 
-import { Box, Button, Chip, Divider, IconButton, Tab, Typography } from "@mui/material";
+import { Box, Button, Chip, Divider, IconButton, Tab, Tooltip, Typography } from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import AddIcon from "@mui/icons-material/Add";
 import { useCustomHook } from "@/app/utils/hook";
@@ -120,13 +122,30 @@ const DownComponent = () => {
     ? activeDossierId
     : dossiers[0].id;
 
+  const currentIndex = dossiers.findIndex(d => d.id === activeTabValue);
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < dossiers.length - 1;
+  const showPagination = dossiers.length > 1;
+
+  const goToPrev = () => { if (hasPrev) setActiveDossierId(dossiers[currentIndex - 1].id); };
+  const goToNext = () => { if (hasNext) setActiveDossierId(dossiers[currentIndex + 1].id); };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", overflow: "hidden" }}>
       <TabContext value={activeTabValue}>
         <Box sx={{ borderBottom: "1px solid", borderColor: "divider", display: "flex", alignItems: "center", flexShrink: 0 }}>
           <TabList
+            variant="scrollable"
+            scrollButtons={false}
             onChange={(_, v) => setActiveDossierId(v)}
-            sx={{ minHeight: "36px" }}
+            sx={{
+              minHeight: "36px",
+              "& .MuiTabs-scroller": {
+                overflowX: "auto !important",
+                "&::-webkit-scrollbar": { height: "3px" },
+                "&::-webkit-scrollbar-thumb": { backgroundColor: "#c1c1c1", borderRadius: "999px" },
+              },
+            }}
           >
             {dossiers.map(d => (
               <Tab
@@ -136,15 +155,7 @@ const DownComponent = () => {
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                     {d.name}
                     {(d.isNew || d.pendingBookingIds.length > 0) && (
-                      <Box
-                        sx={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: "50%",
-                          bgcolor: "warning.main",
-                          flexShrink: 0,
-                        }}
-                      />
+                      <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "warning.main", flexShrink: 0 }} />
                     )}
                   </Box>
                 }
@@ -153,9 +164,34 @@ const DownComponent = () => {
               />
             ))}
           </TabList>
-          <IconButton size="small" onClick={createNewDossier} sx={{ mx: 0.5, flexShrink: 0 }}>
+
+          <IconButton size="small" onClick={createNewDossier} sx={{ ml: 0.5, flexShrink: 0 }}>
             <AddIcon sx={{ fontSize: "18px" }} />
           </IconButton>
+
+          {showPagination && (
+            <>
+              <Box sx={{ flex: 1 }} />
+              <Divider orientation="vertical" flexItem sx={{ mx: 0.5, my: "auto", height: "18px" }} />
+              <Tooltip title="Previous dossier">
+                <span>
+                  <IconButton size="small" onClick={goToPrev} disabled={!hasPrev} sx={{ p: 0.25 }}>
+                    <ChevronLeftIcon sx={{ fontSize: "16px" }} />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Typography sx={{ fontSize: "11px", color: "text.secondary", whiteSpace: "nowrap", mx: 0.25, userSelect: "none" }}>
+                {currentIndex + 1} / {dossiers.length}
+              </Typography>
+              <Tooltip title="Next dossier">
+                <span>
+                  <IconButton size="small" onClick={goToNext} disabled={!hasNext} sx={{ p: 0.25 }}>
+                    <ChevronRightIcon sx={{ fontSize: "16px" }} />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </>
+          )}
         </Box>
 
         {dossiers.map(d => (
