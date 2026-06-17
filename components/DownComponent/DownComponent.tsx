@@ -116,16 +116,6 @@ const DossierTabContent = ({
 const DownComponent = () => {
   const { dossiers, activeDossierId, setActiveDossierId, acceptDossier, cancelDossier, createNewDossier } = useCustomHook();
 
-  if (dossiers.length === 0) {
-    return (
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}>
-        <Typography sx={{ fontSize: "13px", color: "text.secondary" }}>
-          Check a booking above to create a dossier
-        </Typography>
-      </Box>
-    );
-  }
-
   const activeTabValue = (activeDossierId && dossiers.some(d => d.id === activeDossierId))
     ? activeDossierId
     : dossiers[0].id;

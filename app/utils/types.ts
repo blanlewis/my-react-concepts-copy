@@ -43,15 +43,23 @@ type CustomHookAction =
     { type: CustomHookActionEnum.SET_CUSTOM_HOOK_DATA; payload: Partial<CustomHookState> }
     | { type: CustomHookActionEnum.SET_NAME_AND_ROLE; payload: UserType[] };
 
+const DEFAULT_DOSSIER: Dossier = {
+    id: "dossier-1",
+    name: "Dossier 1",
+    bookingIds: [],
+    pendingBookingIds: [],
+    isNew: true,
+};
+
 const customHookInitialState: CustomHookState = {
     nameAndRole:[],
     activeUserByTypeTab: null,
     usersByTypeData: [],
     isLoading: false,
     activeRightPanelToggle: RightComponentToggleOptionsEnum.LIST,
-    dossiers: [],
-    activeDossierId: null,
-    dossierCounter: 0,
+    dossiers: [DEFAULT_DOSSIER],
+    activeDossierId: DEFAULT_DOSSIER.id,
+    dossierCounter: 1,
 };
 
 export type { CustomHookState, CustomHookAction, UserType, Dossier };

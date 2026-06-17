@@ -99,16 +99,23 @@ const useCustomHook = () => {
 
     // Cancel: delete the dossier if it's brand new, otherwise just clear pending
     const cancelDossier = (dossierId: string) => {
-        const { dossiers } = state;
+        const { dossiers, dossierCounter } = state;
         const dossier = dossiers.find(d => d.id === dossierId);
         if (!dossier) return;
 
         if (dossier.isNew) {
             const remaining = dossiers.filter(d => d.id !== dossierId);
-            setCustomHookState({
-                dossiers: remaining,
-                activeDossierId: remaining.length > 0 ? remaining[remaining.length - 1].id : null,
-            });
+            if (remaining.length > 0) {
+                setCustomHookState({
+                    dossiers: remaining,
+                    activeDossierId: remaining.at(-1)!.id,
+                });
+            } else {
+                // Always keep at least one tab — create a fresh default
+                const newCounter = dossierCounter + 1;
+                const fresh = { id: `dossier-${newCounter}`, name: `Dossier ${newCounter}`, bookingIds: [], pendingBookingIds: [], isNew: true };
+                setCustomHookState({ dossiers: [fresh], activeDossierId: fresh.id, dossierCounter: newCounter });
+            }
         } else {
             setCustomHookState({
                 dossiers: dossiers.map(d =>
