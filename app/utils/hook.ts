@@ -63,6 +63,7 @@ const useCustomHook = () => {
             const newDossier: Dossier = {
                 id: `dossier-${newCounter}`,
                 name: `Dossier ${newCounter}`,
+                status: "draft",
                 bookingIds: [],
                 pendingBookingIds: [bookingId],
                 isNew: true,
@@ -118,7 +119,7 @@ const useCustomHook = () => {
             } else {
                 // Always keep at least one tab — create a fresh default
                 const newCounter = dossierCounter + 1;
-                const fresh = { id: `dossier-${newCounter}`, name: `Dossier ${newCounter}`, bookingIds: [], pendingBookingIds: [], isNew: true };
+                const fresh = { id: `dossier-${newCounter}`, name: `Dossier ${newCounter}`, status: "draft" as const, bookingIds: [], pendingBookingIds: [], isNew: true };
                 setCustomHookState({ dossiers: [fresh], activeDossierId: fresh.id, dossierCounter: newCounter });
             }
         } else {
@@ -137,6 +138,7 @@ const useCustomHook = () => {
         const newDossier: Dossier = {
             id: `dossier-${newCounter}`,
             name: `Dossier ${newCounter}`,
+            status: "draft",
             bookingIds: [],
             pendingBookingIds: [],
             isNew: true,
