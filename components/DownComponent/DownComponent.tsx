@@ -454,24 +454,21 @@ const DownComponent = () => {
     ? activeDossierId
     : (filteredDossiers[0]?.id ?? dossiers[0].id);
 
-  // Clamp windowStart so the active tab is always inside the visible window.
-  // The user can scroll freely with the arrows, but we never let the active tab
-  // fall outside the rendered <Tab> list (which would cause a MUI mismatch warning).
-  const activeIdxInFiltered = Math.max(0, filteredDossiers.findIndex(d => d.id === activeTabValue));
-  const lo = Math.max(0, activeIdxInFiltered - visibleCount + 1);
-  const hi = Math.min(activeIdxInFiltered, Math.max(0, filteredDossiers.length - visibleCount));
-  const effectiveWindowStart = Math.max(lo, Math.min(windowStart, hi));
-
-  const canScrollLeft  = effectiveWindowStart > 0;
-  const canScrollRight = effectiveWindowStart + visibleCount < filteredDossiers.length;
+  const canScrollLeft  = windowStart > 0;
+  const canScrollRight = windowStart + visibleCount < filteredDossiers.length;
   const showPagination = filteredDossiers.length > 1;
 
   const scrollLeft  = () => setWindowStart(w => Math.max(0, w - 1));
   const scrollRight = () => setWindowStart(w => Math.min(filteredDossiers.length - visibleCount, w + 1));
 
-  const visibleDossiers  = filteredDossiers.slice(effectiveWindowStart, effectiveWindowStart + visibleCount);
-  const overflowDossiers = [...filteredDossiers.slice(0, effectiveWindowStart), ...filteredDossiers.slice(effectiveWindowStart + visibleCount)];
+  const visibleDossiers  = filteredDossiers.slice(windowStart, windowStart + visibleCount);
+  const overflowDossiers = [...filteredDossiers.slice(0, windowStart), ...filteredDossiers.slice(windowStart + visibleCount)];
   const hasOverflow      = overflowDossiers.length > 0;
+
+  // When the active tab scrolls outside the window, MUI needs at least one matching
+  // <Tab value={activeTabValue}> to exist. We render it hidden so the scroll window
+  // is fully free while MUI still finds its match.
+  const activeTabInWindow = visibleDossiers.some(d => d.id === activeTabValue);
 
   const Dot = () => <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "warning.main", flexShrink: 0 }} />;
 
@@ -534,6 +531,17 @@ const DownComponent = () => {
                   },
                 }}
               >
+                {/* Ghost tab keeps MUI happy when the active tab is scrolled out of view.
+                    Must NOT use display:none — MUI checks the element is in layout. */}
+                {!activeTabInWindow && (
+                  <Tab
+                    key="__ghost__"
+                    value={activeTabValue}
+                    label=""
+                    disableRipple
+                    sx={{ width: 0, minWidth: "0 !important", p: "0 !important", overflow: "hidden", opacity: 0, pointerEvents: "none" }}
+                  />
+                )}
                 {visibleDossiers.map(d => (
                   <Tab
                     key={d.id}
@@ -586,7 +594,7 @@ const DownComponent = () => {
                   <span><IconButton size="small" onClick={scrollLeft} disabled={!canScrollLeft} sx={{ p: 0.25 }}><ChevronLeftIcon sx={{ fontSize: "16px" }} /></IconButton></span>
                 </Tooltip>
                 <Typography sx={{ fontSize: "11px", color: "text.secondary", whiteSpace: "nowrap", mx: 0.25, userSelect: "none" }}>
-                  {effectiveWindowStart + 1} / {filteredDossiers.length}
+                  {windowStart + 1} / {filteredDossiers.length}
                 </Typography>
                 <Tooltip title="Scroll right">
                   <span><IconButton size="small" onClick={scrollRight} disabled={!canScrollRight} sx={{ p: 0.25 }}><ChevronRightIcon sx={{ fontSize: "16px" }} /></IconButton></span>
