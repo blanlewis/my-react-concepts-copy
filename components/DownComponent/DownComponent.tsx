@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useState, useRef, useLayoutEffect } from "react";
+import { Fragment, useEffect, useMemo, useState, useRef, useLayoutEffect } from "react";
 import {
   Box, Button, Checkbox, Chip, Divider, IconButton, Menu, MenuItem,
   Switch, Tab, Tooltip, Typography,
@@ -442,25 +442,36 @@ const DownComponent = () => {
     setVisibleCount(count);
   }, [containerWidth, filteredDossiers]);
 
+  const [windowStart, setWindowStart] = useState(0);
+
+  // Clamp windowStart when the list or visible count changes
+  useEffect(() => {
+    const maxStart = Math.max(0, filteredDossiers.length - visibleCount);
+    setWindowStart(w => Math.min(w, maxStart));
+  }, [filteredDossiers.length, visibleCount]);
+
   const activeTabValue = (activeDossierId && filteredDossiers.some(d => d.id === activeDossierId))
     ? activeDossierId
     : (filteredDossiers[0]?.id ?? dossiers[0].id);
 
-  const activeIdx = filteredDossiers.findIndex(d => d.id === activeTabValue);
-  let windowStart = 0;
-  if (activeIdx >= visibleCount && visibleCount > 0) windowStart = activeIdx - visibleCount + 1;
+  // Clamp windowStart so the active tab is always inside the visible window.
+  // The user can scroll freely with the arrows, but we never let the active tab
+  // fall outside the rendered <Tab> list (which would cause a MUI mismatch warning).
+  const activeIdxInFiltered = Math.max(0, filteredDossiers.findIndex(d => d.id === activeTabValue));
+  const lo = Math.max(0, activeIdxInFiltered - visibleCount + 1);
+  const hi = Math.min(activeIdxInFiltered, Math.max(0, filteredDossiers.length - visibleCount));
+  const effectiveWindowStart = Math.max(lo, Math.min(windowStart, hi));
 
-  const visibleDossiers  = filteredDossiers.slice(windowStart, windowStart + visibleCount);
-  const overflowDossiers = [...filteredDossiers.slice(0, windowStart), ...filteredDossiers.slice(windowStart + visibleCount)];
-  const hasOverflow      = overflowDossiers.length > 0;
-
-  const currentIndex   = filteredDossiers.findIndex(d => d.id === activeTabValue);
-  const hasPrev        = currentIndex > 0;
-  const hasNext        = currentIndex < filteredDossiers.length - 1;
+  const canScrollLeft  = effectiveWindowStart > 0;
+  const canScrollRight = effectiveWindowStart + visibleCount < filteredDossiers.length;
   const showPagination = filteredDossiers.length > 1;
 
-  const goToPrev = () => { if (hasPrev) setActiveDossierId(filteredDossiers[currentIndex - 1].id); };
-  const goToNext = () => { if (hasNext) setActiveDossierId(filteredDossiers[currentIndex + 1].id); };
+  const scrollLeft  = () => setWindowStart(w => Math.max(0, w - 1));
+  const scrollRight = () => setWindowStart(w => Math.min(filteredDossiers.length - visibleCount, w + 1));
+
+  const visibleDossiers  = filteredDossiers.slice(effectiveWindowStart, effectiveWindowStart + visibleCount);
+  const overflowDossiers = [...filteredDossiers.slice(0, effectiveWindowStart), ...filteredDossiers.slice(effectiveWindowStart + visibleCount)];
+  const hasOverflow      = overflowDossiers.length > 0;
 
   const Dot = () => <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "warning.main", flexShrink: 0 }} />;
 
@@ -567,18 +578,18 @@ const DownComponent = () => {
               ))}
             </Menu>
 
-            {/* Pagination */}
+            {/* Pagination — scrolls the visible tab window, does not change active tab */}
             {showPagination && (
               <>
                 <Divider orientation="vertical" flexItem sx={{ mx: 0.5, my: "auto", height: "18px" }} />
-                <Tooltip title="Previous dossier">
-                  <span><IconButton size="small" onClick={goToPrev} disabled={!hasPrev} sx={{ p: 0.25 }}><ChevronLeftIcon sx={{ fontSize: "16px" }} /></IconButton></span>
+                <Tooltip title="Scroll left">
+                  <span><IconButton size="small" onClick={scrollLeft} disabled={!canScrollLeft} sx={{ p: 0.25 }}><ChevronLeftIcon sx={{ fontSize: "16px" }} /></IconButton></span>
                 </Tooltip>
                 <Typography sx={{ fontSize: "11px", color: "text.secondary", whiteSpace: "nowrap", mx: 0.25, userSelect: "none" }}>
-                  {currentIndex + 1} / {filteredDossiers.length}
+                  {effectiveWindowStart + 1} / {filteredDossiers.length}
                 </Typography>
-                <Tooltip title="Next dossier">
-                  <span><IconButton size="small" onClick={goToNext} disabled={!hasNext} sx={{ p: 0.25 }}><ChevronRightIcon sx={{ fontSize: "16px" }} /></IconButton></span>
+                <Tooltip title="Scroll right">
+                  <span><IconButton size="small" onClick={scrollRight} disabled={!canScrollRight} sx={{ p: 0.25 }}><ChevronRightIcon sx={{ fontSize: "16px" }} /></IconButton></span>
                 </Tooltip>
               </>
             )}
