@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Box, Button, Chip, Divider, IconButton, Tab, Tooltip, Typography } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -8,6 +9,15 @@ import AddIcon from "@mui/icons-material/Add";
 import { useCustomHook } from "@/app/utils/hook";
 import { Dossier } from "@/app/utils/types";
 import { Booking, BOOKINGS_DATA } from "@/app/utils/bookingsData";
+import CustomToggleButton from "@/components/CustomToggleButton";
+
+const FILTER_TOGGLE_DATA = [
+  { label: "All",       value: "all",       icon: <Typography sx={{ fontSize: "11px", fontWeight: 500, lineHeight: 1 }}>All</Typography> },
+  { label: "Drafts",    value: "drafts",    icon: <Typography sx={{ fontSize: "11px", fontWeight: 500, lineHeight: 1 }}>Drafts</Typography> },
+  { label: "Active",    value: "active",    icon: <Typography sx={{ fontSize: "11px", fontWeight: 500, lineHeight: 1 }}>Active</Typography> },
+  { label: "Delayed",   value: "delayed",   icon: <Typography sx={{ fontSize: "11px", fontWeight: 500, lineHeight: 1 }}>Delayed</Typography> },
+  { label: "Completed", value: "completed", icon: <Typography sx={{ fontSize: "11px", fontWeight: 500, lineHeight: 1 }}>Completed</Typography> },
+];
 
 const BookingRow = ({ booking, isPending }: { booking: Booking; isPending?: boolean }) => (
   <Box
@@ -117,6 +127,7 @@ const DossierTabContent = ({
 
 const DownComponent = () => {
   const { dossiers, activeDossierId, setActiveDossierId, acceptDossier, cancelDossier, createNewDossier } = useCustomHook();
+  const [dossierFilter, setDossierFilter] = useState("all");
 
   const activeTabValue = (activeDossierId && dossiers.some(d => d.id === activeDossierId))
     ? activeDossierId
@@ -132,6 +143,16 @@ const DownComponent = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", overflow: "hidden" }}>
+      <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 0.5, borderBottom: "1px solid", borderColor: "divider", flexShrink: 0 }}>
+        <CustomToggleButton
+          toggleData={FILTER_TOGGLE_DATA}
+          selectedToggle={dossierFilter}
+          setSelectedToggle={(v) => setDossierFilter(v ?? "all")}
+          isDeselectionNotAllowed
+          height={24}
+          autoWidth
+        />
+      </Box>
       <TabContext value={activeTabValue}>
         <Box sx={{ borderBottom: "1px solid", borderColor: "divider", display: "flex", alignItems: "center", flexShrink: 0 }}>
           <TabList

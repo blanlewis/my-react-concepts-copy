@@ -14,6 +14,8 @@ interface CustomToggleButtonProps {
   readonly selectedToggle: string | null;
   readonly setSelectedToggle: (value: string | null) => void;
   readonly isDeselectionNotAllowed?: boolean;
+  readonly height?: number;
+  readonly autoWidth?: boolean;
 }
 
 const CustomToggleButton = ({
@@ -21,6 +23,8 @@ const CustomToggleButton = ({
   selectedToggle,
   setSelectedToggle,
   isDeselectionNotAllowed = false,
+  height = 40,
+  autoWidth = false,
 }: CustomToggleButtonProps) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -40,7 +44,7 @@ const CustomToggleButton = ({
       exclusive
       onChange={handleChange}
       sx={{
-        height: 40,
+        height,
         borderRadius: 2,
         backgroundColor: isDark ? theme.palette.grey[800] : "#FFF",
         border: `1px solid ${isDark ? theme.palette.grey[700] : "#D5D7DA"}`,
@@ -63,23 +67,27 @@ const CustomToggleButton = ({
           value={toggleValue}
           disableRipple
           sx={{
-            minWidth: 44,
+            minWidth: autoWidth ? "unset" : 44,
+            px: autoWidth ? 1.5 : undefined,
+            py: 0,
             "&:hover": {
               backgroundColor: "transparent",
             },
           }}
         >
-          <Box
-            sx={{
-              width: 20,
-              height: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {icon}
-          </Box>
+          {autoWidth ? icon : (
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {icon}
+            </Box>
+          )}
         </ToggleButton>
       ))}
     </ToggleButtonGroup>
