@@ -3,7 +3,7 @@
 import { Fragment, useMemo, useState, useRef, useLayoutEffect } from "react";
 import {
   Box, Button, Checkbox, Chip, Divider, IconButton, Menu, MenuItem,
-  Tab, Tooltip, Typography,
+  Switch, Tab, Tooltip, Typography,
 } from "@mui/material";
 import ChevronLeftIcon        from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon       from "@mui/icons-material/ChevronRight";
@@ -481,7 +481,10 @@ const DownComponent = () => {
         <DateFilter label="Pickup" />
         <DateFilter label="Delivery" />
         <DropdownFilter label="Type" options={["Standard", "Express", "Economy", "Fragile"]} />
-        <DropdownFilter label="My Trips" options={["Trip A", "Trip B", "Trip C"]} />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flexShrink: 0 }}>
+          <Switch size="small" defaultChecked sx={{ m: 0 }} />
+          <Typography sx={{ fontSize: "12px", whiteSpace: "nowrap" }}>My trips</Typography>
+        </Box>
       </Box>
 
       {filteredDossiers.length === 0 ? (
