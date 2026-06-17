@@ -126,7 +126,7 @@ const DownComponent = () => {
         <Box sx={{ borderBottom: "1px solid", borderColor: "divider", display: "flex", alignItems: "center", flexShrink: 0 }}>
           <TabList
             onChange={(_, v) => setActiveDossierId(v)}
-            sx={{ minHeight: "36px", flex: 1, overflow: "hidden" }}
+            sx={{ minHeight: "36px" }}
           >
             {dossiers.map(d => (
               <Tab
