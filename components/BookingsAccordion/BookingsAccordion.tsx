@@ -70,6 +70,7 @@ interface BookingsAccordionProps {
   checkedIds?: string[];
   excludedIds?: string[];
   onToggle?: (id: string) => void;
+  searchTerm?: string;
 }
 
 const BookingsAccordion = ({
@@ -77,18 +78,22 @@ const BookingsAccordion = ({
   checkedIds = [],
   excludedIds = [],
   onToggle = () => {},
+  searchTerm = "",
 }: BookingsAccordionProps) => {
+  const q = searchTerm.toLowerCase().trim();
   const items = (filterSuggestion ? BOOKINGS_DATA.filter(b => b.isSuggestion) : BOOKINGS_DATA)
-    .filter(b => !excludedIds.includes(b.id));
+    .filter(b => !excludedIds.includes(b.id))
+    .filter(b => !q || b.bookingNumber.toLowerCase().includes(q) ||
+      `${b.origin.city} ${b.destination.city}`.toLowerCase().includes(q));
 
   return (
-    <Box sx={{ width: "100%", overflowX: "auto" }}>
+    <Box sx={{ width: "100%" }}>
       {/* Sticky header */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          height: "36px",
+          height: "32px",
           bgcolor: "background.paper",
           borderBottom: "2px solid",
           borderColor: "divider",
@@ -121,7 +126,7 @@ const BookingsAccordion = ({
             sx={{
               display: "flex",
               alignItems: "center",
-              height: "36px",
+              height: "32px",
               borderBottom: "1px solid",
               borderColor: "divider",
               minWidth: "max-content",

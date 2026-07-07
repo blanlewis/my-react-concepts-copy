@@ -55,11 +55,9 @@ const BookingsBar = () => {
       sx={{
         display: "flex",
         alignItems: "center",
-        width: "100%",
-        height: "36px",
-        flexShrink: 0,
-        borderBottom: "1px solid",
-        borderColor: "divider",
+        flex: 1,
+        minWidth: 0,
+        overflow: "hidden",
         px: 1,
         gap: `${GAP}px`,
       }}

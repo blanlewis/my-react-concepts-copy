@@ -2,13 +2,20 @@
 
 import { Fragment, useEffect, useMemo, useState, useRef, useLayoutEffect } from "react";
 import {
-  Box, Button, Checkbox, Chip, Divider, IconButton, Menu, MenuItem,
+  Box, Button, Checkbox, Chip, Divider, IconButton, InputBase,
   Switch, Tab, Tooltip, Typography,
 } from "@mui/material";
 import ChevronLeftIcon        from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon       from "@mui/icons-material/ChevronRight";
-import MoreVertIcon           from "@mui/icons-material/MoreVert";
+import PlayCircleOutlinedIcon from "@mui/icons-material/PlayCircleOutlined";
+import FlagOutlinedIcon       from "@mui/icons-material/FlagOutlined";
+import EditOutlinedIcon       from "@mui/icons-material/EditOutlined";
+import DeleteOutlineIcon      from "@mui/icons-material/DeleteOutlined";
 import AddIcon                from "@mui/icons-material/Add";
+import CloseIcon              from "@mui/icons-material/Close";
+import CheckIcon              from "@mui/icons-material/Check";
+import ReplayIcon             from "@mui/icons-material/Replay";
+import SearchIcon             from "@mui/icons-material/Search";
 import InfoOutlinedIcon       from "@mui/icons-material/InfoOutlined";
 import SettingsOutlinedIcon   from "@mui/icons-material/SettingsOutlined";
 import OutlinedFlagIcon       from "@mui/icons-material/OutlinedFlag";
@@ -115,7 +122,7 @@ const BookingTableRow = ({ row }: { row: Extract<DossierRow, { type: "booking" }
     <Box
       sx={{
         display: "flex", alignItems: "center",
-        px: 1, py: 0.6,
+        px: 1, height: 32, minHeight: 32,
         borderBottom: "1px solid", borderColor: "divider",
         "&:hover": { bgcolor: "action.hover" },
       }}
@@ -174,7 +181,7 @@ const ViaTableRow = ({ row }: { row: Extract<DossierRow, { type: "via" }> }) => 
   <Box
     sx={{
       display: "flex", alignItems: "center",
-      px: 1, py: 0.75,
+      px: 1, height: 32, minHeight: 32,
       borderBottom: "1px solid", borderColor: "divider",
     }}
   >
@@ -312,7 +319,7 @@ const DossierTabContent = ({
         <ColHd label="Economy"   width={COL.economy}  align="right" />
       </Box>
 
-      {/* ── Scrollable rows ── */}
+      {/* ── Scrollable rows + expenses ── */}
       <Box sx={{ flex: 1, overflowY: "auto" }}>
         {content.rows.map((row, i) =>
           row.type === "via"
@@ -361,19 +368,16 @@ const DossierTabContent = ({
                 </Typography>
               </Box>
             ))}
+            <Box sx={{ borderTop: "1px solid", borderColor: "divider", px: 1.5, py: 1, display: "flex", gap: 1, justifyContent: "flex-end" }}>
+              <Button variant="outlined" size="small" onClick={onCancel} sx={{ textTransform: "none", fontSize: "12px" }}>Cancel</Button>
+              <Button variant="contained" size="small" onClick={onAccept} sx={{ textTransform: "none", fontSize: "12px" }}>Accept</Button>
+            </Box>
           </>
         )}
+
       </Box>
 
-      {/* Accept / Cancel for pending bookings */}
-      {pendingBookings.length > 0 && (
-        <Box sx={{ borderTop: "1px solid", borderColor: "divider", px: 1.5, py: 1, display: "flex", gap: 1, justifyContent: "flex-end", flexShrink: 0 }}>
-          <Button variant="outlined" size="small" onClick={onCancel} sx={{ textTransform: "none", fontSize: "12px" }}>Cancel</Button>
-          <Button variant="contained" size="small" onClick={onAccept} sx={{ textTransform: "none", fontSize: "12px" }}>Accept</Button>
-        </Box>
-      )}
-
-      {/* ── Footer: Expenses ── */}
+      {/* ── Footer: Expenses — fixed, always visible ── */}
       <Box
         sx={{
           display: "flex", alignItems: "center",
@@ -397,19 +401,32 @@ const DossierTabContent = ({
 
 const PLUS_BTN_W = 34;
 
-const DownComponent = () => {
+// Heights used for natural-content-height calculation (must match actual rendered values)
+const BAR_H     = 33; // 32px bar + 1px border
+const ROUTE_H   = 43; // route origin→dest header
+const STATUS_H  = 31; // status chip / dossier-number row
+const COL_H     = 30; // column headers row
+const ROW_H     = 32; // each booking or via row (fixed)
+const EXPENSE_H = 33; // expenses footer
+
+interface DownComponentProps {
+  onNaturalHeightChange?: (h: number) => void;
+}
+
+const DownComponent = ({ onNaturalHeightChange }: DownComponentProps = {}) => {
   const { dossiers, activeDossierId, setActiveDossierId, acceptDossier, cancelDossier, createNewDossier } = useCustomHook();
   const [dossierFilter, setDossierFilter] = useState("all");
-  const [overflowAnchor, setOverflowAnchor] = useState<null | HTMLElement>(null);
+  const [dossierSearch, setDossierSearch] = useState("");
   const [visibleCount, setVisibleCount] = useState(dossiers.length);
 
   const measureRef = useRef<HTMLDivElement>(null);
   const { ref: containerRef, width: containerWidth = 0 } = useResizeObserver<HTMLDivElement>();
 
-  const filteredDossiers = useMemo(
-    () => dossierFilter === "all" ? dossiers : dossiers.filter(d => d.status === STATUS_FILTER_MAP[dossierFilter]),
-    [dossiers, dossierFilter]
-  );
+  const filteredDossiers = useMemo(() => {
+    const byStatus = dossierFilter === "all" ? dossiers : dossiers.filter(d => d.status === STATUS_FILTER_MAP[dossierFilter]);
+    if (!dossierSearch.trim()) return byStatus;
+    return byStatus.filter(d => d.name.toLowerCase().includes(dossierSearch.toLowerCase()));
+  }, [dossiers, dossierFilter, dossierSearch]);
 
   const filterToggleData = useMemo(() => [
     { label: "All",        value: "all",       count: dossiers.length },
@@ -461,14 +478,29 @@ const DownComponent = () => {
   const scrollLeft  = () => setWindowStart(w => Math.max(0, w - 1));
   const scrollRight = () => setWindowStart(w => Math.min(filteredDossiers.length - visibleCount, w + 1));
 
-  const visibleDossiers  = filteredDossiers.slice(windowStart, windowStart + visibleCount);
-  const overflowDossiers = [...filteredDossiers.slice(0, windowStart), ...filteredDossiers.slice(windowStart + visibleCount)];
-  const hasOverflow      = overflowDossiers.length > 0;
+  const visibleDossiers = filteredDossiers.slice(windowStart, windowStart + visibleCount);
 
   // When the active tab scrolls outside the window, MUI needs at least one matching
   // <Tab value={activeTabValue}> to exist. We render it hidden so the scroll window
   // is fully free while MUI still finds its match.
   const activeTabInWindow = visibleDossiers.some(d => d.id === activeTabValue);
+
+  useEffect(() => {
+    if (!onNaturalHeightChange) return;
+    const status = dossiers.find(d => d.id === activeTabValue)?.status;
+    const content = DOSSIER_PANEL_CONTENT[activeTabValue];
+    const hasActionBar = status !== "completed";
+    const rowCount = content?.rows.length ?? 0;
+    const natural =
+      BAR_H +                        // filter bar
+      (hasActionBar ? BAR_H : 0) +   // action bar
+      BAR_H +                        // dossier tabs row
+      ROUTE_H + STATUS_H + COL_H +   // fixed content header sections
+      rowCount * ROW_H +             // data rows
+      EXPENSE_H +                    // expenses footer
+      16;                            // rounding buffer
+    onNaturalHeightChange(natural);
+  }, [activeTabValue, dossiers, onNaturalHeightChange]);
 
   const Dot = () => <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "warning.main", flexShrink: 0 }} />;
 
@@ -476,7 +508,7 @@ const DownComponent = () => {
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", overflow: "hidden" }}>
 
       {/* Filter bar */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, px: 1, py: 0.5, borderBottom: "1px solid", borderColor: "divider", flexShrink: 0 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, px: 1, height: 32, minHeight: 32, borderBottom: "1px solid", borderColor: "divider", flexShrink: 0 }}>
         <CustomToggleButton
           toggleData={filterToggleData}
           selectedToggle={dossierFilter}
@@ -486,6 +518,21 @@ const DownComponent = () => {
           autoWidth
         />
         <Divider orientation="vertical" flexItem sx={{ my: "auto", height: "18px" }} />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, px: 0.75, height: 24, border: "1px solid", borderColor: "divider", borderRadius: "6px", bgcolor: "background.paper", flexShrink: 0 }}>
+          <SearchIcon sx={{ fontSize: 14, color: "text.disabled" }} />
+          <InputBase
+            value={dossierSearch}
+            onChange={(e) => setDossierSearch(e.target.value)}
+            placeholder="Search dossier…"
+            sx={{ fontSize: "11px", width: 130, "& input": { p: 0 } }}
+          />
+          {dossierSearch && (
+            <IconButton size="small" onClick={() => setDossierSearch("")} sx={{ p: 0 }}>
+              <CloseIcon sx={{ fontSize: 12, color: "text.disabled" }} />
+            </IconButton>
+          )}
+        </Box>
+        <Divider orientation="vertical" flexItem sx={{ my: "auto", height: "18px" }} />
         <DateFilter label="Pickup" />
         <DateFilter label="Delivery" />
         <DropdownFilter label="Type" options={["Standard", "Express", "Economy", "Fragile"]} />
@@ -494,6 +541,62 @@ const DownComponent = () => {
           <Typography sx={{ fontSize: "12px", whiteSpace: "nowrap" }}>My trips</Typography>
         </Box>
       </Box>
+
+      {/* Action bar — hidden for completed, context-sensitive for all other statuses */}
+      {(() => {
+        const activeDossier = dossiers.find(d => d.id === activeTabValue);
+        const status = activeDossier?.status;
+        if (status === "completed") return null;
+
+        const outlinedBtn = { height: 24, fontSize: "11px", textTransform: "none", px: 1.25, py: 0, borderRadius: "8px", minWidth: 0, borderColor: "#D5D7DA", boxShadow: "inset 0px 0px 0px 1px rgba(10,13,18,0.18), inset 0px -2px 0px 0px rgba(10,13,18,0.05), 0px 1px 2px 0px rgba(10,13,18,0.05)", color: "text.primary", "&:hover": { borderColor: "#D5D7DA", bgcolor: "action.hover" } };
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, height: 32, minHeight: 32, px: 1, borderBottom: "1px solid", borderColor: "divider", flexShrink: 0 }}>
+            {status === "draft" && (
+              <>
+                <Button variant="contained" size="small" startIcon={<PlayCircleOutlinedIcon sx={{ fontSize: "14px !important" }} />} sx={{ height: 24, fontSize: "11px", textTransform: "none", px: 1.25, py: 0, borderRadius: "8px", minWidth: 0 }}>
+                  Activate Trip
+                </Button>
+                <Button variant="outlined" size="small" startIcon={<FlagOutlinedIcon sx={{ fontSize: "14px !important" }} />} sx={outlinedBtn}>
+                  Manage route
+                </Button>
+                <Button variant="outlined" size="small" startIcon={<EditOutlinedIcon sx={{ fontSize: "14px !important" }} />} sx={outlinedBtn}>
+                  Edit Trip Schedule
+                </Button>
+                <Button variant="outlined" size="small" startIcon={<DeleteOutlineIcon sx={{ fontSize: "14px !important" }} />} sx={{ ...outlinedBtn, color: "error.main", "&:hover": { borderColor: "#D5D7DA", bgcolor: "error.50" } }}>
+                  Delete Dossier
+                </Button>
+              </>
+            )}
+
+            {status === "predraft" && (
+              <>
+                <Button variant="outlined" size="small" startIcon={<FlagOutlinedIcon sx={{ fontSize: "14px !important" }} />} sx={outlinedBtn}>
+                  Manage route
+                </Button>
+                <Button variant="outlined" size="small" startIcon={<CloseIcon sx={{ fontSize: "14px !important" }} />} sx={{ ...outlinedBtn, color: "error.main", borderColor: "error.main", "&:hover": { borderColor: "error.main", bgcolor: "error.50" } }}>
+                  Reject
+                </Button>
+                <Button variant="outlined" size="small" startIcon={<CheckIcon sx={{ fontSize: "14px !important" }} />} sx={{ ...outlinedBtn, color: "primary.main", borderColor: "primary.main", "&:hover": { borderColor: "primary.main", bgcolor: "primary.50" } }}>
+                  Accept
+                </Button>
+              </>
+            )}
+
+            {(status === "active" || status === "delayed") && (
+              <>
+                <Button variant="outlined" size="small" startIcon={<FlagOutlinedIcon sx={{ fontSize: "14px !important" }} />} sx={outlinedBtn}>
+                  Manage route
+                </Button>
+                <Button variant="outlined" size="small" startIcon={<ReplayIcon sx={{ fontSize: "14px !important" }} />} sx={outlinedBtn}>
+                  Plan return
+                </Button>
+              </>
+            )}
+
+          </Box>
+        );
+      })()}
 
       {filteredDossiers.length === 0 ? (
         <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -523,7 +626,7 @@ const DownComponent = () => {
                 scrollButtons={false}
                 onChange={(_, v) => setActiveDossierId(v)}
                 sx={{
-                  minHeight: "36px",
+                  minHeight: "32px",
                   "& .MuiTabs-scroller": {
                     overflowX: "auto !important",
                     "&::-webkit-scrollbar": { height: "3px" },
@@ -554,7 +657,7 @@ const DownComponent = () => {
                       </Box>
                     }
                     disableRipple
-                    sx={{ minHeight: "36px", py: 0.5, px: 1.5, fontSize: "12px", textTransform: "none", minWidth: "auto" }}
+                    sx={{ minHeight: "32px", py: 0, px: 1.5, fontSize: "12px", textTransform: "none", minWidth: "auto" }}
                   />
                 ))}
               </TabList>
@@ -562,29 +665,6 @@ const DownComponent = () => {
                 <AddIcon sx={{ fontSize: "18px" }} />
               </IconButton>
             </Box>
-
-            {/* Overflow menu */}
-            <Button
-              size="small" variant="outlined" disableRipple
-              onClick={(e) => hasOverflow && setOverflowAnchor(e.currentTarget)}
-              sx={{ minWidth: 0, px: 0.5, height: "28px", flexShrink: 0, ml: 0.5, visibility: hasOverflow ? "visible" : "hidden" }}
-            >
-              <MoreVertIcon sx={{ fontSize: "16px" }} />
-            </Button>
-            <Menu anchorEl={overflowAnchor} open={Boolean(overflowAnchor)} onClose={() => setOverflowAnchor(null)} slotProps={{ paper: { sx: { mt: 0.5, minWidth: 160 } } }}>
-              {overflowDossiers.map(d => (
-                <MenuItem
-                  key={d.id}
-                  selected={d.id === activeTabValue}
-                  onClick={() => { setActiveDossierId(d.id); setOverflowAnchor(null); }}
-                  sx={{ fontSize: "13px", gap: 1 }}
-                >
-                  {d.name}
-                  {dossierFilter === "all" && <StatusChip status={d.status} />}
-                  {(d.isNew || d.pendingBookingIds.length > 0) && <Dot />}
-                </MenuItem>
-              ))}
-            </Menu>
 
             {/* Pagination — scrolls the visible tab window, does not change active tab */}
             {showPagination && (

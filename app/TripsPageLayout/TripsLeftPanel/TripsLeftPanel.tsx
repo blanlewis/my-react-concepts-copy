@@ -1,7 +1,10 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import CustomTabs from "@/components/CustomTabs";
 import { useState } from "react";
 import CustomAccordion from "@/components/CustomAccordion";
+import PlayCircleOutlinedIcon from "@mui/icons-material/PlayCircleOutlined";
+import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 enum PlanningTabEnum {
   ALL = "all",
@@ -49,6 +52,30 @@ const TripsLeftPanel = () => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
       <Typography sx={{ textAlign: "center", fontSize: "14px" }}>Bookings</Typography>
+
+      {/* Action bar */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, height: 34, minHeight: 34, px: 1, borderBottom: 1, borderColor: "divider" }}>
+        <Button
+          variant="contained"
+          size="small"
+          startIcon={<PlayCircleOutlinedIcon sx={{ fontSize: "16px !important" }} />}
+          sx={{ height: 26, fontSize: "12px", textTransform: "none", px: 1.5, borderRadius: 1 }}
+        >
+          Activate Trip
+        </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<FlagOutlinedIcon sx={{ fontSize: "16px !important" }} />}
+          sx={{ height: 26, fontSize: "12px", textTransform: "none", px: 1.5, borderRadius: 1 }}
+        >
+          Manage route
+        </Button>
+        <IconButton size="small" sx={{ ml: "auto", p: 0.25 }}>
+          <MoreVertIcon sx={{ fontSize: 18 }} />
+        </IconButton>
+      </Box>
+
       <CustomTabs tabsData={tabsData} value={value} setValue={setValue} />
     </Box>
   );
