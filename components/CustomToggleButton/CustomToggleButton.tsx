@@ -6,6 +6,7 @@ import { useTheme } from "@mui/material/styles";
 interface ToggleDataProps {
   readonly label: string;
   readonly icon: React.ReactNode;
+  
   readonly value: string;
 }
 
